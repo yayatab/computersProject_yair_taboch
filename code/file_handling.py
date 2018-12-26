@@ -18,6 +18,38 @@ def _check_data_validity(x, dx, y, dy):
         raise Exception("Input file error: Data lists are not the same length.")
 
 
+def _convert_to_floats(line, start_index=0):
+    """
+    splits the line by spaces and converts the data to float
+    :param line: the line to read the data from
+    :param start_index: the first index of the data to convert from
+    :return: list of floats
+    """
+    return [float(f) for f in line.split(' ')[start_index:]]
+
+
+def _extract_x_name(line):
+    """
+    gets the x title from the line if the line starts with the string "x axis"
+    :param line:
+    :return:
+    """
+    if line.startswith("x axis"):
+        return line[line.index(":"):]
+    return ""
+
+
+def _extract_y_name(line):
+    """
+    gets the y title from the line if the line starts with the string "y axis"
+    :param line: the line to extract teh data from
+    :return:
+    """
+    if line.startswith("y axis"):
+        return line[line.index(":"):]
+    return ""
+
+
 def handle_rows(file_path):
     """
     reads data from file and returns a tuple with:
@@ -26,30 +58,60 @@ def handle_rows(file_path):
     :return: tuple containg lists of the data, the names of the axis
     """
     # creates a funtion that gets a string of dots and converts them to float
-    convert_to_floats = lambda l: [float(f) for f in l.split(' ')[1:]]
     with open(file_path, 'r') as fil:
         lines = fil.readlines()
     x_dots = []
     y_dots = []
-    x_uncertinties = []
-    y_uncertinties = []
+    x_uncertainties = []
+    y_uncertainties = []
     x_name = ""
     y_name = ""
     for line in lines:
         if line.startswith("x "):
-            x_dots = convert_to_floats(line)
+            x_dots = _convert_to_floats(line, 1)
         elif line.startswith("y "):
-            y_dots = convert_to_floats(line)
+            y_dots = _convert_to_floats(line, 1)
         elif line.startswith("y "):
-            x_uncertinties = convert_to_floats(line)
+            x_uncertainties = _convert_to_floats(line, 1)
         elif line.startswith("y "):
-            y_uncertinties = convert_to_floats(line)
-        elif line.startswith("x axis"):
-            x_name = line[line.index(":"):]
-        elif line.startswith("y axis"):
-            y_name = line[line.index(":"):]
+            y_uncertainties = _convert_to_floats(line, 1)
         else:
+            if x_name == "":
+                x_name = _extract_x_name(line)
+            if y_name == "":
+                y_name = _extract_y_name(line)
             continue
-    _check_data_validity(x_dots, y_dots, x_uncertinties, y_uncertinties)
+    _check_data_validity(x_dots, y_dots, x_uncertainties, y_uncertainties)
 
-    return x_dots, y_dots, x_uncertinties, y_uncertinties, x_name, y_name
+    return x_dots, y_dots, x_uncertainties, y_uncertainties, x_name, y_name
+
+
+def handle_columns(file_path):
+    """
+    reads data from file and returns a tuple with:
+        (x, dx, y, dy, x_axis_title, y_axis_title)
+    :param file_path: path to the wanted file of the data
+    :return: tuple containg lists of the data, the names of the axis
+    """
+    with open(file_path, 'r') as fil:
+        lines = fil.readlines()
+
+    x_dots = []
+    y_dots = []
+    x_uncertainties = []
+    y_uncertainties = []
+    x_name, y_name = "", ""
+    for line in lines[1:]:
+        x, dx, y, dy = tuple(_convert_to_floats(line))
+        x_dots.append(x)
+        y_dots.append(y)
+        x_uncertainties.append(dx)
+        y_uncertainties.append(dy)
+        if x_name == "":
+            x_name = _extract_x_name(line)
+        if y_name == "":
+            y_name = _extract_y_name(line)
+
+    _check_data_validity(x_dots, y_dots, x_uncertainties, y_uncertainties)
+
+    return x_dots, y_dots, x_uncertainties, y_uncertainties, x_name, y_name
