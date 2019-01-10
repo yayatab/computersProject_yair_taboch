@@ -11,11 +11,11 @@ def _check_data_validity(x, dx, y, dy):
 
     if not all([_ == lengths[0] for _ in lengths]):
         print("Input file error: Data lists are not the same length.")
-        raise Exception("Input file error: Data lists are not the same length.")
+        raise IOError("Input file error: Data lists are not the same length.")
 
     if not all([_ > 0 for _ in dx]) or not all([_ > 0 for _ in dy]):
         print("Input file error: Not all uncertainties are positive.")
-        raise Exception("Input file error: Data lists are not the same length.")
+        raise IOError("Input file error: Not all uncertainties are positive.")
 
 
 def _convert_to_floats(line, start_index=0):
@@ -25,7 +25,7 @@ def _convert_to_floats(line, start_index=0):
     :param start_index: the first index of the data to convert from
     :return: list of floats
     """
-    return [float(f) for f in line.split(' ')[start_index:]]
+    return [float(f) for f in line.strip().split(' ')[start_index:] if f != '']
 
 
 def _extract_x_name(line):
@@ -35,7 +35,7 @@ def _extract_x_name(line):
     :return:
     """
     if line.startswith("x axis"):
-        return line[line.index(":"):]
+        return line[line.index(": ") + 2:].strip()
     return ""
 
 
@@ -46,7 +46,7 @@ def _extract_y_name(line):
     :return:
     """
     if line.startswith("y axis"):
-        return line[line.index(":"):]
+        return line[line.index(": ") + 2:].strip()
     return ""
 
 
@@ -67,21 +67,23 @@ def handle_rows(file_path):
     x_name = ""
     y_name = ""
     for line in lines:
-        if line.startswith("x "):
-            x_dots = _convert_to_floats(line, 1)
-        elif line.startswith("y "):
-            y_dots = _convert_to_floats(line, 1)
-        elif line.startswith("y "):
-            x_uncertainties = _convert_to_floats(line, 1)
-        elif line.startswith("y "):
-            y_uncertainties = _convert_to_floats(line, 1)
-        else:
+
+        if line.lower().startswith("x axis"):
             if x_name == "":
                 x_name = _extract_x_name(line)
+        elif line.lower().startswith("y axis"):
             if y_name == "":
                 y_name = _extract_y_name(line)
+        elif line.lower().startswith("x "):
+            x_dots = _convert_to_floats(line, 1)
+        elif line.lower().startswith("y "):
+            y_dots = _convert_to_floats(line, 1)
+        elif line.lower().startswith("dx "):
+            x_uncertainties = _convert_to_floats(line, 1)
+        elif line.lower().startswith("dy "):
+            y_uncertainties = _convert_to_floats(line, 1)
             continue
-    _check_data_validity(x_dots, y_dots, x_uncertainties, y_uncertainties)
+    _check_data_validity(x_dots, x_uncertainties, y_dots, y_uncertainties)
 
     return x_dots, y_dots, x_uncertainties, y_uncertainties, x_name, y_name
 
@@ -101,12 +103,23 @@ def handle_columns(file_path):
     x_uncertainties = []
     y_uncertainties = []
     x_name, y_name = "", ""
+    line_index = 1
     for line in lines[1:]:
-        x, dx, y, dy = tuple(_convert_to_floats(line))
+        line_index += 1
+
+        if line == '' or line == '\n':
+            break
+
+        tmp = tuple(_convert_to_floats(line))
+        if len(tmp) != 4:
+            print("Input file error: Data lists are not the same length")
+            raise IOError("Input file error: Data lists are not the same length.")
+        x, dx, y, dy = tmp
         x_dots.append(x)
         y_dots.append(y)
         x_uncertainties.append(dx)
         y_uncertainties.append(dy)
+    for line in lines[line_index:]:
         if x_name == "":
             x_name = _extract_x_name(line)
         if y_name == "":
