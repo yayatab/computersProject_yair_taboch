@@ -128,3 +128,15 @@ def handle_columns(file_path):
     _check_data_validity(x_dots, y_dots, x_uncertainties, y_uncertainties)
 
     return x_dots, y_dots, x_uncertainties, y_uncertainties, x_name, y_name
+
+
+if __name__ == '__main__':
+    print(handle_columns(
+        'C:\\Users\\user\\PycharmProjects\\computers_for_physicists\\inputOutputExamples\\workingCols\\input.txt'))
+    print(handle_rows(
+        'C:\\Users\\user\\PycharmProjects\\computers_for_physicists\\inputOutputExamples\\workingRows\\input.txt'))
+    try:
+        print(handle_columns(
+            'C:\\Users\\user\\PycharmProjects\\computers_for_physicists\\inputOutputExamples\\errDataLength\\input.txt'))
+    except Exception:
+        print("HUI")
