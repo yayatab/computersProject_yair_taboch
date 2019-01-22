@@ -77,9 +77,9 @@ def fit_linear(results_dict):
     dy = results_dict['y_uncertainties']
 
     N = len(x)
-    ret_dict = {'linear_paramters': _get_linear_parameters(x, y, dy), 'chi_squared': 0.0, 'chi_squared_reduced': 0.0}
-    a = ret_dict['linear_paramters']['a']
-    b = ret_dict['linear_paramters']['b']
+    ret_dict = {'linear_parameters': _get_linear_parameters(x, y, dy), 'chi_squared': 0.0, 'chi_squared_reduced': 0.0}
+    a = ret_dict['linear_parameters']['a']
+    b = ret_dict['linear_parameters']['b']
     ret_dict['chi_squared'] = _gen_chi_square(x, y, dy, a, b)
     ret_dict['chi_squared_reduced'] = ret_dict['chi_squared'] / (N - 2)
     return ret_dict
