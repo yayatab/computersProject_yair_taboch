@@ -63,7 +63,7 @@ def _get_linear_parameters(x, y, dy):
     return {'a': a, 'da': sqrt(da_squared), 'b': b, 'db': sqrt(db_squared)}
 
 
-def fit_linear(results_dict):
+def fit_params_to_linear(results_dict):
     """
     generates the linear fit
     :param results_dict: dict with x_dots, y_dots,x_uncertainties,y_uncertainties,x_name,y_name
@@ -86,7 +86,7 @@ def fit_linear(results_dict):
 
 
 if __name__ == '__main__':
-    print(fit_linear(file_handling.handle_columns(
+    print(fit_params_to_linear(file_handling.handle_columns(
         'C:\\Users\\user\\PycharmProjects\\computers_for_physicists\\inputOutputExamples\\workingCols\\input.txt')))
-    print(fit_linear(file_handling.handle_rows(
+    print(fit_params_to_linear(file_handling.handle_rows(
         'C:\\Users\\user\\PycharmProjects\\computers_for_physicists\\inputOutputExamples\\workingRows\\input.txt')))

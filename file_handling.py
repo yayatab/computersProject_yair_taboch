@@ -142,6 +142,21 @@ def handle_columns(file_path):
         'y_name': y_name}
 
 
+def extract_data(file_name):
+    """
+    returns the data in a file as a dict
+    :param file_name: the name of the file
+    :type file_name: str
+    :return: the data in the file as dict
+    :rtype: dict
+    """
+    first_line = open(file_name).readline().lower()
+    if first_line.find('x') != -1 and first_line.find('dx') != -1:
+        return handle_columns(file_name)
+    else:
+        return handle_rows(file_name)
+
+
 if __name__ == '__main__':
     print(handle_columns(
         'C:\\Users\\user\\PycharmProjects\\computers_for_physicists\\inputOutputExamples\\workingCols\\input.txt'))
