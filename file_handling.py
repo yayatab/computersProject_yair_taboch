@@ -85,7 +85,13 @@ def handle_rows(file_path):
             continue
     _check_data_validity(x_dots, x_uncertainties, y_dots, y_uncertainties)
 
-    return x_dots, y_dots, x_uncertainties, y_uncertainties, x_name, y_name
+    return {
+        'x_dots': x_dots,
+        'y_dots': y_dots,
+        'x_uncertainties': x_uncertainties,
+        'y_uncertainties': y_uncertainties,
+        'x_name': x_name,
+        'y_name': y_name}
 
 
 def handle_columns(file_path):
@@ -127,7 +133,13 @@ def handle_columns(file_path):
 
     _check_data_validity(x_dots, y_dots, x_uncertainties, y_uncertainties)
 
-    return x_dots, y_dots, x_uncertainties, y_uncertainties, x_name, y_name
+    return {
+        'x_dots': x_dots,
+        'y_dots': y_dots,
+        'x_uncertainties': x_uncertainties,
+        'y_uncertainties': y_uncertainties,
+        'x_name': x_name,
+        'y_name': y_name}
 
 
 if __name__ == '__main__':
