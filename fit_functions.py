@@ -42,7 +42,7 @@ def _gen_chi_square(x, y, dy, a, b):
     for xi, yi, dyi in zip(x, y, dy):
         counter = yi - (a * xi + b)
         denominator = dyi
-        chi_squared += (counter / denominator)**2
+        chi_squared += (counter / denominator) ** 2
     return chi_squared
 
 
@@ -90,3 +90,15 @@ if __name__ == '__main__':
         'C:\\Users\\user\\PycharmProjects\\computers_for_physicists\\inputOutputExamples\\workingCols\\input.txt')))
     print(fit_params_to_linear(file_handling.handle_rows(
         'C:\\Users\\user\\PycharmProjects\\computers_for_physicists\\inputOutputExamples\\workingRows\\input.txt')))
+
+
+def print_parameters(linear_params, fitted_params):
+    """
+
+    :param linear_params:
+    :return:
+    """
+    print('a = %s +- %s' % (linear_params['a'], linear_params['da']))
+    print('b = %s +- %s' % (linear_params['b'], linear_params['db']))
+    print('chi2 = %s ' % (fitted_params['chi_squared']))
+    print('chi2_reduced = %s' % (fitted_params['chi_squared_reduced']))
